@@ -1,9 +1,9 @@
 import { AxiosError } from "axios";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import AxiosClient from "../../../config/axios-config";
 import envConfig from "../../../config/env-config";
-import { ILoginResponse } from "../../../contexts/auth-provider/auth.provider.i";
-import { cookies } from "next/headers";
+import { ILoginResponse } from "../api.i";
 
 export const config = {
   api: {

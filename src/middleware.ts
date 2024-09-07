@@ -6,9 +6,16 @@ const authPaths = ["/login"];
 const publicPaths: string[] = [];
 
 export function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname.startsWith("/api")) return NextResponse.next();
-
   const accessToken = req.cookies.get("access_token")?.value;
+
+  if (req.nextUrl.pathname.startsWith("/api")) {
+    accessToken && req.headers.set("Authorization", `Bearer ${accessToken}`);
+    const requestHeaders = new Headers(req.headers);
+    return NextResponse.next({
+      headers: requestHeaders,
+    });
+  }
+
   const isAuthPage = authPaths.some((path) =>
     req.nextUrl.pathname.startsWith(path)
   );

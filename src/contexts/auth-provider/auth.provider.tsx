@@ -1,11 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import authService from "../../services/auth/auth.service";
+import { useLoginMutation, useLogoutMutation } from "../../queries/auth-query";
+import accountsService from "../../services/accounts/accounts";
 import { IUserInfo } from "../../services/auth/auth.service.i";
 import { IAuthContext, ILoginParams } from "./auth.provider.i";
-import { useLoginMutation } from "../../queries/auth-query";
 
 const defaultProvider: IAuthContext = {
   userInfo: null,
@@ -22,7 +22,9 @@ type Props = {
 };
 
 const AuthProvider = ({ children }: Props) => {
+  const pathname = usePathname();
   const loginUseMutation = useLoginMutation();
+  const logoutMutation = useLogoutMutation();
   const [userInfo, setUserInfo] = useState<IUserInfo | null>(
     defaultProvider.userInfo
   );
@@ -38,7 +40,11 @@ const AuthProvider = ({ children }: Props) => {
     });
   };
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    if (logoutMutation.isPending) return;
+
+    return logoutMutation.mutateAsync().then(() => router.replace("/login"));
+  };
 
   const values = {
     userInfo,
@@ -49,7 +55,22 @@ const AuthProvider = ({ children }: Props) => {
     logout: handleLogout,
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const initAuth = async () => {
+      accountsService
+        .getAccountsMe()
+        .then((userInfo) => {
+          setUserInfo(userInfo.data);
+        })
+        .catch(() => {
+          if (pathname === "/login") {
+            router.replace("/login");
+          }
+        });
+    };
+
+    initAuth();
+  }, []);
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };

@@ -6,14 +6,12 @@ const postLogin = async (body: ILoginBody, config: AxiosRequestConfig = {}) => {
   return axiosClient.post<IUserInfo>("login", body, config);
 };
 
-const getGetUserInfoFromAccessToken = async (
-  config: AxiosRequestConfig = {}
-) => {
-  return axiosClient.get<IUserInfo>("auth/check-acces-token", config);
+const postLogout = async () => {
+  return axiosClient.post<IUserInfo>("logout", {});
 };
 
 const authService = {
   postLogin,
-  getGetUserInfoFromAccessToken,
+  postLogout,
 };
 export default authService;
