@@ -1,9 +1,9 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect, useState } from "react";
+import { useAccountsProfile } from "../../queries/accounts-query";
 import { useLoginMutation, useLogoutMutation } from "../../queries/auth-query";
-import accountsService from "../../services/accounts/accounts";
 import { IUserInfo } from "../../services/auth/auth.service.i";
 import { IAuthContext, ILoginParams } from "./auth.provider.i";
 
@@ -22,9 +22,9 @@ type Props = {
 };
 
 const AuthProvider = ({ children }: Props) => {
-  const pathname = usePathname();
   const loginUseMutation = useLoginMutation();
   const logoutMutation = useLogoutMutation();
+  const getAccountsProfile = useAccountsProfile();
   const [userInfo, setUserInfo] = useState<IUserInfo | null>(
     defaultProvider.userInfo
   );
@@ -56,20 +56,18 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    const initAuth = async () => {
-      accountsService
-        .getAccountsMe()
-        .then((userInfo) => {
-          setUserInfo(userInfo.data);
-        })
-        .catch(() => {
-          if (pathname === "/login") {
-            router.replace("/login");
-          }
-        });
-    };
+    try {
+      const initAuth = async () => {
+        if (getAccountsProfile.isPending) return;
 
-    initAuth();
+        if (!getAccountsProfile?.data?.data) return handleLogout();
+        setUserInfo(getAccountsProfile.data.data);
+      };
+
+      initAuth();
+    } catch {
+      handleLogout();
+    }
   }, []);
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
