@@ -1,10 +1,11 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import envConfig from "./env-config";
 
 class AxiosConfig {
-  private axiosInstance: AxiosInstance;
+  public axiosInstance: AxiosInstance;
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: "http://localhost:4001/",
+      baseURL: envConfig.NEXT_PUBLIC_FE_ENDPOINT,
       timeout: 10000,
       headers: {
         "Content-Type": "application/json",

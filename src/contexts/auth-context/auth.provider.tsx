@@ -35,10 +35,8 @@ const AuthProvider = ({ children }: Props) => {
   const pathname = usePathname();
 
   const handleLogin = (params: ILoginParams) => {
-    authService.postLogin<ILoginResponse>(params.body).then((response) => {
-      setUserInfo({ ...response.data.userInfo });
-      document.cookie = `access_token=${response.data.accessToken}; path=/; secure; SameSite=Strict`;
-      document.cookie = `refresh_token=${response.data.refreshToken}; path=/; secure; SameSite=Strict`;
+    authService.postLogin<IUserInfo>(params.body).then((response) => {
+      setUserInfo({ ...response.data });
       router.replace("/");
     });
   };
@@ -64,30 +62,31 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    const initAuth = async () => {
-      const accessToken = Cookies.get("access_token");
-      if (accessToken) {
-        authService
-          .getGetUserInfoFromAccessToken<IUserInfo>({
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          .then((userInfo) => {
-            setUserInfo(userInfo.data);
-          })
-          .catch(() => {
-            clear();
-          });
-      } else {
-        clear();
-        if (pathname === "/login") {
-          router.replace("/login");
-        }
-      }
-    };
+    // const initAuth = async () => {
+    //   const accessToken = Cookies.get("access_token");
+    //   console.log("access_token", accessToken)
+    //   if (accessToken) {
+    //     authService
+    //       .getGetUserInfoFromAccessToken<IUserInfo>({
+    //         headers: {
+    //           Authorization: `Bearer ${accessToken}`,
+    //         },
+    //       })
+    //       .then((userInfo) => {
+    //         setUserInfo(userInfo.data);
+    //       })
+    //       .catch(() => {
+    //         clear();
+    //       });
+    //   } else {
+    //     clear();
+    //     if (pathname === "/login") {
+    //       router.replace("/login");
+    //     }
+    //   }
+    // };
 
-    initAuth();
+    // initAuth();
   }, []);
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

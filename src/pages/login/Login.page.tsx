@@ -43,7 +43,6 @@ const LoginPage: React.FC = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { password, username } = values;
-    console.log(values);
     login({
       body: {
         password,
