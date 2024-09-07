@@ -1,18 +1,15 @@
 import { AxiosRequestConfig } from "axios";
 import axiosClient from "../../config/axios-config";
-import { ILoginBody } from "./auth.service.i";
+import { ILoginBody, IUserInfo } from "./auth.service.i";
 
-const postLogin = async <T>(
-  body: ILoginBody,
-  config: AxiosRequestConfig = {}
-) => {
-  return axiosClient.post<T>("login", body, config);
+const postLogin = async (body: ILoginBody, config: AxiosRequestConfig = {}) => {
+  return axiosClient.post<IUserInfo>("login", body, config);
 };
 
-const getGetUserInfoFromAccessToken = async <T>(
+const getGetUserInfoFromAccessToken = async (
   config: AxiosRequestConfig = {}
 ) => {
-  return axiosClient.get<T>("auth/check-acces-token", config);
+  return axiosClient.get<IUserInfo>("auth/check-acces-token", config);
 };
 
 const authService = {

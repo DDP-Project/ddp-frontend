@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
-import { AuthContext } from "../../contexts/auth-context/auth.provider";
+import { AuthContext } from "../../contexts/auth-provider/auth.provider";
 import {
   passwordSchema,
   usernameSchema,

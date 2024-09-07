@@ -16,7 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { useContext } from "react";
-import { AuthContext } from "../../../contexts/auth-context/auth.provider";
+import { AuthContext } from "../../../contexts/auth-provider/auth.provider";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import {
   DropdownMenu,
