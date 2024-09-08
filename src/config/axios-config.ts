@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
 import envConfig from "./env-config";
 
 class AxiosConfig {
@@ -16,7 +21,7 @@ class AxiosConfig {
   async get<T>(
     url: string,
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse<T>> {
+  ): Promise<AxiosResponse<T, AxiosError>> {
     return await this.axiosInstance.get<T>(url, config);
   }
 
@@ -24,31 +29,31 @@ class AxiosConfig {
     url: string,
     data: any,
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.post<T>(url, data, config);
+  ): Promise<AxiosResponse<T, AxiosError>> {
+    return await this.axiosInstance.post<T>(url, data, config);
   }
 
   async put<T>(
     url: string,
     data: any,
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.put<T>(url, data, config);
+  ): Promise<AxiosResponse<T, AxiosError>> {
+    return await this.axiosInstance.put<T>(url, data, config);
   }
 
   async patch<T>(
     url: string,
     data: any,
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.patch<T>(url, data, config);
+  ): Promise<AxiosResponse<T, AxiosError>> {
+    return await this.axiosInstance.patch<T>(url, data, config);
   }
 
   async delete<T>(
     url: string,
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.delete<T>(url, config);
+  ): Promise<AxiosResponse<T, AxiosError>> {
+    return await this.axiosInstance.delete<T>(url, config);
   }
 }
 
