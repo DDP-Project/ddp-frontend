@@ -3,7 +3,8 @@ import { IUserInfo } from "../auth/auth.service.i";
 
 const accountsService = {
   getAccountsMe: async () => {
-    return axiosClient.get<IUserInfo>("accounts/me");
+    const { data } = await axiosClient.get<IUserInfo>("accounts/me");
+    return data;
   },
 };
 

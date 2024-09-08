@@ -6,5 +6,6 @@ export const useAccountsProfile = () => {
   return useQuery({
     queryKey: [QueryKey.ACCOUNTS_PROFILE],
     queryFn: accountsService.getAccountsMe,
+    retry: 0,
   });
 };

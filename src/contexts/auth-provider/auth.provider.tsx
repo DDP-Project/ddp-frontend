@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import { usePathname, useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useAccountsProfile } from "../../queries/accounts-query";
 import { useLoginMutation, useLogoutMutation } from "../../queries/auth-query";
@@ -24,13 +25,14 @@ type Props = {
 const AuthProvider = ({ children }: Props) => {
   const loginUseMutation = useLoginMutation();
   const logoutMutation = useLogoutMutation();
-  const getAccountsProfile = useAccountsProfile();
+  const { data, error, isPending, isError, refetch } = useAccountsProfile();
   const [userInfo, setUserInfo] = useState<IUserInfo | null>(
     defaultProvider.userInfo
   );
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogin = (params: ILoginParams) => {
     if (loginUseMutation.isPending) return;
@@ -43,6 +45,7 @@ const AuthProvider = ({ children }: Props) => {
   const handleLogout = () => {
     if (logoutMutation.isPending) return;
 
+    setUserInfo(null);
     return logoutMutation.mutateAsync().then(() => router.replace("/login"));
   };
 
@@ -56,19 +59,24 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    try {
-      const initAuth = async () => {
-        if (getAccountsProfile.isPending) return;
+    const initAuth = () => {
+      if (isPending || pathname === "/login") return;
 
-        if (!getAccountsProfile?.data?.data) return handleLogout();
-        setUserInfo(getAccountsProfile.data.data);
-      };
+      if (isError) {
+        if ((error as AxiosError)?.response?.status === 401) {
+          handleLogout();
+        } else {
+          refetch();
+        }
+        return;
+      }
+      if (data) {
+        setUserInfo(data);
+      }
+    };
 
-      initAuth();
-    } catch {
-      handleLogout();
-    }
-  }, []);
+    initAuth();
+  }, [isPending]);
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };

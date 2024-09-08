@@ -17,7 +17,7 @@ class AxiosConfig {
     url: string,
     config: AxiosRequestConfig = {}
   ): Promise<AxiosResponse<T>> {
-    return this.axiosInstance.get<T>(url, config);
+    return await this.axiosInstance.get<T>(url, config);
   }
 
   async post<T>(
