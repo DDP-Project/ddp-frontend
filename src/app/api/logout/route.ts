@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export const config = {
   api: {
-    boduParser: false,
+    bodyParser: false,
   },
 };
 export async function POST() {

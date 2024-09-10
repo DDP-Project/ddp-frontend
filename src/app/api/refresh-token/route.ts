@@ -11,14 +11,22 @@ export const config = {
   },
 };
 export async function POST(req: NextRequest) {
+  const cookieStore = cookies();
   try {
-    const dataBody = await req.json();
-    const response = await AxiosClient.post<ILoginResponse>(`login`, dataBody, {
-      baseURL: envConfig.NEXT_PUBLIC_API_ENDPOINT,
-    });
+    const dataBody = {
+      refreshToken: cookieStore.get("refresh_token")?.value,
+    };
+
+    const response = await AxiosClient.post<ILoginResponse>(
+      `refresh-token`,
+      JSON.stringify(dataBody),
+      {
+        baseURL: envConfig.NEXT_PUBLIC_API_ENDPOINT,
+      }
+    );
 
     const { userInfo, accessToken, refreshToken } = response.data;
-    const cookieStore = cookies();
+
     cookieStore.set("access_token", accessToken, {
       httpOnly: true,
       sameSite: "strict",
@@ -35,6 +43,10 @@ export async function POST(req: NextRequest) {
       status: response.status,
     });
   } catch (error: AxiosError | any) {
+    if (error?.response?.status === 401) {
+      cookieStore.delete("refresh_token");
+      cookieStore.delete("access_token");
+    }
     if (error?.isAxiosError === true) {
       return NextResponse.json(
         {
