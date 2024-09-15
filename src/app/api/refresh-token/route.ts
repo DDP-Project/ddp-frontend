@@ -1,8 +1,11 @@
 import { AxiosError } from "axios";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
+import { NextResponse } from "next/server";
 import AxiosClient from "../../../config/axios-config";
 import envConfig from "../../../config/env-config";
+import { LOGIN_PAGE } from "../../../constants/routers.constant";
 import { ILoginResponse } from "../api.i";
 
 export const config = {
@@ -10,7 +13,7 @@ export const config = {
     bodyParser: false,
   },
 };
-export async function POST(req: NextRequest) {
+export async function POST() {
   const cookieStore = cookies();
   try {
     const dataBody = {
@@ -46,6 +49,7 @@ export async function POST(req: NextRequest) {
     if (error?.response?.status === 401) {
       cookieStore.delete("refresh_token");
       cookieStore.delete("access_token");
+      redirect(LOGIN_PAGE)
     }
     if (error?.isAxiosError === true) {
       return NextResponse.json(

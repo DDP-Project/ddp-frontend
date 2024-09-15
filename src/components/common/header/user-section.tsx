@@ -11,7 +11,6 @@ import {
   Plus,
   PlusCircle,
   Settings,
-  User,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -32,8 +31,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
+import { ACCOUNT_SETTING_PAGE } from "../../../constants/routers.constant";
+import { useRouter } from "next/navigation";
 
 const UserSectionComponent: React.FC = () => {
+  const router = useRouter();
   const { userInfo, logout } = useContext(AuthContext);
 
   return (
@@ -49,14 +51,13 @@ const UserSectionComponent: React.FC = () => {
           <DropdownMenuLabel>{userInfo?.fullName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(ACCOUNT_SETTING_PAGE);
+              }}
+            >
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>Settings Profile</span>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>

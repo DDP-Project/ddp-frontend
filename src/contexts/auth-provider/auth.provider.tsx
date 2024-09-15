@@ -1,7 +1,7 @@
 "use client";
 
 import { AxiosError } from "axios";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useAccountsProfile } from "../../queries/accounts-query";
 import { useLoginMutation, useLogoutMutation } from "../../queries/auth-query";
@@ -32,7 +32,6 @@ const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
 
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleLogin = (params: ILoginParams) => {
     if (loginUseMutation.isPending) return;
@@ -60,7 +59,7 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = () => {
-      if (isPending || pathname === "/login") return;
+      if (isPending) return;
 
       if (isError) {
         if ((error as AxiosError)?.response?.status === 401) {
